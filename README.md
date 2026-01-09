@@ -6,6 +6,7 @@ https://github.com/daan-sudo/vue3-nest-admin-web
 
 ## 安装依赖
 
+(需要在src下面创建.env文件)
 pnpm i
 
 ## 启动服务

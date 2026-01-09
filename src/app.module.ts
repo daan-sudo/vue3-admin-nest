@@ -13,12 +13,15 @@ import { LoginGuard } from './login.guard';
 import { SystemModule } from './system/system.module';
 import { OssModule } from './oss/oss.module';
 import { ConfigModule } from '@nestjs/config';
+import * as path from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // 关键：设置为全局模块，其他地方直接用 ConfigService
-      envFilePath: ['.env.development', '.env'], // 指定读取的文件顺序
+      // envFilePath: ['.env.development', '.env'], // 指定读取的文件顺序
+      envFilePath: [path.join(__dirname, '.env')], //
+
       cache: true, // 提高性能，加载后会存入内存
     }),
     JwtModule.registerAsync({
