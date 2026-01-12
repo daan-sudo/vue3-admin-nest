@@ -26,6 +26,8 @@ import { PageUserDto } from './dto/page-user.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Department } from 'src/user/entities/department.entity';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
+import { RoleListVo } from './vo/role.vo';
+import { UserListVo } from './vo/user.vo';
 
 @Injectable()
 export class SystemService {
@@ -250,12 +252,18 @@ export class SystemService {
         menuIds: role.menus ? role.menus.map((menu) => menu.id) : [],
       };
     });
-    return {
-      records,
-      total,
-      current,
-      pageSize,
-    };
+    const vo = new RoleListVo();
+    vo.total = total;
+    vo.records = records;
+    vo.current = current;
+    vo.pageSize = pageSize;
+    return vo;
+    // return {
+    //   records,
+    //   total,
+    //   current,
+    //   pageSize,
+    // };
   }
   async addRole(createRoleDto: CreateRoleDto) {
     const { menuIds, ...roleData } = createRoleDto;
@@ -344,14 +352,19 @@ export class SystemService {
       skip: (current - 1) * pageSize,
       take: pageSize,
     });
-
+    const vo = new UserListVo();
+    vo.total = total;
+    vo.records = list;
+    vo.current = current;
+    vo.pageSize = pageSize;
+    return vo;
     // 3. 格式化返回结果，确保适配前端表格字段
-    return {
-      records: list,
-      total,
-      current,
-      pageSize,
-    };
+    // return {
+    //   records: list,
+    //   total,
+    //   current,
+    //   pageSize,
+    // };
   }
   // 获取部门列表
   async deptList() {

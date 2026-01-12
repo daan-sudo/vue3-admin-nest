@@ -12,8 +12,17 @@ import { JwtModule } from '@nestjs/jwt';
 import { LoginGuard } from './login.guard';
 import { SystemModule } from './system/system.module';
 import { OssModule } from './oss/oss.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import 'winston-daily-rotate-file';
 import * as path from 'path';
+import {
+  utilities,
+  WINSTON_MODULE_NEST_PROVIDER,
+  WinstonLogger,
+  WinstonModule,
+} from 'nest-winston';
+import winston from 'winston';
+import { CustomTypeOrmLogger } from './CustomTypeOrmLogger';
 
 @Module({
   imports: [
@@ -34,22 +43,63 @@ import * as path from 'path';
       }),
     }),
     UserModule,
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '123456',
-      database: 'vue3-nest-admin',
-      synchronize: true, // 作用: 每次应用启动时自动同步实体到数据库
-      logging: false, // 打印sql语句
-      entities: [User, Role, Menu, Department],
-      poolSize: 10,
-      connectorPackage: 'mysql2',
-      extra: {
-        authPlugin: 'sha256_password',
+    TypeOrmModule.forRootAsync({
+      useFactory(configService: ConfigService, logger: WinstonLogger) {
+        return {
+          type: 'mysql',
+          host: 'localhost',
+          port: 3306,
+          username: 'root',
+          password: '123456',
+          database: 'vue3-nest-admin',
+          // logger: new CustomTypeOrmLogger(logger),
+          synchronize: true, // 作用: 每次应用启动时自动同步实体到数据库
+          logging: false, // 打印sql语句
+          entities: [User, Role, Menu, Department],
+          poolSize: 10,
+          connectorPackage: 'mysql2',
+          extra: {
+            authPlugin: 'sha256_password',
+          },
+        };
       },
+      inject: [ConfigService, WINSTON_MODULE_NEST_PROVIDER],
     }),
+    WinstonModule.forRootAsync({
+      useFactory: () => ({
+        level: 'debug',
+        transports: [
+          // new winston.transports.File({
+          //   filename: `${process.cwd()}/log`,
+          // }),
+          new winston.transports.DailyRotateFile({
+            // level: 'debug',
+            // dirname: 'daily-log',
+            // filename: 'log-%DATE%.log',
+            // datePattern: 'YYYY-MM-DD',
+            // maxSize: '100k',
+            dirname: 'logs',
+            filename: 'error-%DATE%.log',
+            datePattern: 'YYYY-MM-DD',
+            level: 'error', // 只有 error 级别才进这个文件
+            maxSize: '20m',
+            maxFiles: '14d',
+          }),
+          new winston.transports.Console({
+            format: winston.format.combine(
+              winston.format.timestamp(),
+              utilities.format.nestLike(),
+            ),
+          }),
+          new winston.transports.Http({
+            host: 'localhost',
+            port: 3002,
+            path: '/log',
+          }),
+        ],
+      }),
+    }),
+
     RedisModule,
     SystemModule,
     OssModule,

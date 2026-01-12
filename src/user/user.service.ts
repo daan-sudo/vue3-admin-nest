@@ -5,9 +5,10 @@ import { RedisService } from 'src/redis/redis.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { LoginVo, UserInfoVo } from './vo/login-user.vo';
+import { LoginVo } from './vo/login-user.vo';
 import { JwtService } from '@nestjs/jwt';
 import { UpdatePasswordDto, UpdateUserDto } from './dto/update-user.dto';
+// import { UserInfoVo } from './vo/userInfo.vo';
 // const svgCaptcha = require('svg-captcha');
 @Injectable()
 export class UserService {
@@ -33,7 +34,7 @@ export class UserService {
       .getOne();
     console.log(foundUser, 'foundUser');
     if (!foundUser) {
-      throw new HttpException('用户不存在', HttpStatus.NOT_FOUND);
+      throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
     }
     const isMatch = await bcrypt.compare(user.password, foundUser.password);
     if (!isMatch) {
@@ -74,23 +75,24 @@ export class UserService {
       .leftJoinAndSelect('user.department', 'dept')
       .where('user.id = :id', { id })
       .getOne();
-    const vo = new UserInfoVo();
+    // const vo = new UserInfoVo();
     if (!foundUser) {
       throw new HttpException('用户不存在', HttpStatus.NOT_FOUND);
     }
-    vo.id = foundUser.id;
-    vo.username = foundUser.username;
-    vo.avatar = foundUser.avatar;
-    vo.roles = foundUser.roles;
-    vo.department = foundUser.department;
-    vo.status = foundUser.status;
-    vo.phone = foundUser.phone;
-    vo.email = foundUser.email;
-    vo.deptId = foundUser.deptId;
-    vo.remark = foundUser.remark;
-    vo.sex = foundUser.sex;
-    vo.nickName = foundUser.nickName;
-    return vo;
+    return foundUser;
+    // vo.id = foundUser.id;
+    // vo.username = foundUser.username;
+    // vo.avatar = foundUser.avatar;
+    // vo.roles = foundUser.roles;
+    // vo.department = foundUser.department;
+    // vo.status = foundUser.status;
+    // vo.phone = foundUser.phone;
+    // vo.email = foundUser.email;
+    // vo.deptId = foundUser.deptId;
+    // vo.remark = foundUser.remark;
+    // vo.sex = foundUser.sex;
+    // vo.nickName = foundUser.nickName;
+    // return vo;
   }
   async updateUser(id: number, body: UpdateUserDto) {
     const foundUser = await this.userRepo.findOneBy({ id });
