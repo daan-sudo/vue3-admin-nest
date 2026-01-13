@@ -63,6 +63,40 @@ export class UserService {
 
     return vo;
   }
+  // 根据refreshtoken重新获取token
+  async refreshToken(refreshToken: string) {
+    try {
+      const decoded = this.jwtService.verify(refreshToken);
+      const foundUser = await this.userRepo.findOneBy({ id: decoded.id });
+      if (!foundUser) {
+        throw new HttpException('用户不存在', HttpStatus.NOT_FOUND);
+      }
+      const vo = new LoginVo();
+      const access_token = this.jwtService.sign(
+        {
+          id: foundUser.id,
+          username: foundUser.username,
+        },
+        {
+          expiresIn: '1d',
+        },
+      );
+      const refresh_token = this.jwtService.sign(
+        {
+          id: foundUser.id,
+        },
+        {
+          expiresIn: '7d',
+        },
+      );
+      vo.access_token = access_token;
+      vo.refresh_token = refresh_token;
+
+      return vo;
+    } catch (error) {
+      throw new HttpException('token已过期', HttpStatus.UNAUTHORIZED);
+    }
+  }
   // 获取用户信息
   async info(id: number) {
     if (!id) {
@@ -80,19 +114,6 @@ export class UserService {
       throw new HttpException('用户不存在', HttpStatus.NOT_FOUND);
     }
     return foundUser;
-    // vo.id = foundUser.id;
-    // vo.username = foundUser.username;
-    // vo.avatar = foundUser.avatar;
-    // vo.roles = foundUser.roles;
-    // vo.department = foundUser.department;
-    // vo.status = foundUser.status;
-    // vo.phone = foundUser.phone;
-    // vo.email = foundUser.email;
-    // vo.deptId = foundUser.deptId;
-    // vo.remark = foundUser.remark;
-    // vo.sex = foundUser.sex;
-    // vo.nickName = foundUser.nickName;
-    // return vo;
   }
   async updateUser(id: number, body: UpdateUserDto) {
     const foundUser = await this.userRepo.findOneBy({ id });

@@ -100,6 +100,29 @@ export class UserController {
     this.logger.error('我在测试');
     return this.userService.info(+id);
   }
+  // 根据refreshtoken重新获取token
+  @ApiOperation({ summary: '重新获取token' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        refreshToken: {
+          type: 'string',
+          description: '刷新token参数',
+        },
+      },
+      required: ['refreshToken'],
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: '返回token',
+    type: LoginVo,
+  })
+  @Post('refresh')
+  async refresh(@Body() body: { refreshToken: string }) {
+    return this.userService.refreshToken(body.refreshToken);
+  }
   // 更新用户信息
   @RequireLogin()
   @ApiOperation({ summary: '更新用户信息' })
