@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
-import { SeedService } from './seed.service';
+// import { SeedService } from './seed.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Department } from './entities/department.entity';
@@ -16,6 +16,7 @@ import { OssModule } from 'src/oss/oss.module';
     OssModule,
   ],
   controllers: [UserController],
-  providers: [UserService, SeedService],
+  // providers: [UserService, SeedService],
+  providers: [UserService],
 })
 export class UserModule {}

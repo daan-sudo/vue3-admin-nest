@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  nest-app:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    depends_on:
+      - mysql-container
+      - redis-container
+    ports:
+      - 3006:3006
+    networks:
+      - common-network
+  mysql-container:
+    image: mysql
+    volumes:
+      - /volume2/docker/mysql:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: vue3-nest-admin
+      MYSQL_ROOT_PASSWORD: 123456
+    networks:
+      - common-network
+  redis-container:
+    image: redis
+    volumes:
+      - /volume2/docker/redis:/data
+    networks:
+      - common-network
+networks:
+  common-network:
+    driver: bridge

@@ -47,13 +47,13 @@ import { CustomTypeOrmLogger } from './CustomTypeOrmLogger';
       useFactory(configService: ConfigService, logger: WinstonLogger) {
         return {
           type: 'mysql',
-          host: 'localhost',
+          host: 'mysql-container',
           port: 3306,
           username: 'root',
           password: '123456',
           database: 'vue3-nest-admin',
           // logger: new CustomTypeOrmLogger(logger),
-          synchronize: true, // 作用: 每次应用启动时自动同步实体到数据库
+          synchronize: false, // 作用: 每次应用启动时自动同步实体到数据库
           logging: false, // 打印sql语句
           entities: [User, Role, Menu, Department],
           poolSize: 10,
