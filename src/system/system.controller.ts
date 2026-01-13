@@ -20,7 +20,7 @@ import { UpdateMenuDto } from './dto/update-menu.dto';
 import { PageRoleDto } from './dto/page-role.dto';
 import { CreateRoleDto, UpdateRoleDto } from './dto/create-role.dto';
 import { PageUserDto } from './dto/page-user.dto';
-import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
+import { CreateUserDto, UpdateUserSelfDto } from './dto/user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { OssService } from 'src/oss/oss.service';
 import {
@@ -249,14 +249,14 @@ export class SystemController {
   @ApiOperation({ summary: '更新用户' })
   @ApiBody({
     description: '更新用户',
-    type: UpdateUserDto,
+    type: UpdateUserSelfDto,
   })
   @ApiResponse({
     description: '更新用户',
     type: User,
   })
   @Post('user/update')
-  async updateUser(@Body() body: UpdateUserDto) {
+  async updateUser(@Body() body: UpdateUserSelfDto) {
     return await this.systemService.updateUser(body);
   }
   @SetMetadata('require-login', true)

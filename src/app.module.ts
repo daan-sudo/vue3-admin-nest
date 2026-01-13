@@ -29,7 +29,10 @@ import { CustomTypeOrmLogger } from './CustomTypeOrmLogger';
     ConfigModule.forRoot({
       isGlobal: true, // 关键：设置为全局模块，其他地方直接用 ConfigService
       // envFilePath: ['.env.development', '.env'], // 指定读取的文件顺序
-      envFilePath: [path.join(__dirname, '.env')], //
+      envFilePath: [
+        path.join(__dirname, `.env.${process.env.NODE_ENV}`),
+        path.join(__dirname, '.env'),
+      ],
 
       cache: true, // 提高性能，加载后会存入内存
     }),
@@ -47,7 +50,7 @@ import { CustomTypeOrmLogger } from './CustomTypeOrmLogger';
       useFactory(configService: ConfigService, logger: WinstonLogger) {
         return {
           type: 'mysql',
-          host: 'mysql-container',
+          host: configService.get('mysql_server_host'),
           port: 3306,
           username: 'root',
           password: '123456',

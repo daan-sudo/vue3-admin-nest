@@ -52,7 +52,7 @@ export class CreateUserDto {
 }
 
 // 更新 DTO 继承创建 DTO
-export class UpdateUserDto extends CreateUserDto {
+export class UpdateUserSelfDto extends CreateUserDto {
   @IsNumber()
   @IsNotEmpty()
   id: number;

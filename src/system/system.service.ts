@@ -25,7 +25,7 @@ import { CreateRoleDto, UpdateRoleDto } from './dto/create-role.dto';
 import { PageUserDto } from './dto/page-user.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Department } from 'src/user/entities/department.entity';
-import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
+import { CreateUserDto, UpdateUserSelfDto } from './dto/user.dto';
 import { RoleListVo } from './vo/role.vo';
 import { UserListVo } from './vo/user.vo';
 
@@ -421,7 +421,7 @@ export class SystemService {
     return await this.userRepo.save(user);
   }
   // 修改用户
-  async updateUser(updateUserDto: UpdateUserDto) {
+  async updateUser(updateUserDto: UpdateUserSelfDto) {
     const { id, roleIds, password, ...updateData } = updateUserDto;
     // 1. 获取现有用户及角色关系
     const user = await this.userRepo.findOne({
