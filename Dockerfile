@@ -20,7 +20,8 @@ FROM node:20.0-alpine as production-stage
 RUN apk add --no-cache bash
 COPY --from=build-stage /app/dist /app
 COPY --from=build-stage /app/package.json /app/package.json
-# COPY --from=build-stage /app/.env.production /app/.env.production
+# cicd的时候需要删除下面的代码 因为我不会把env传到github仓库
+# COPY --from=build-stage /app/src/.env.production /app/.env.production 
 WORKDIR /app
 
 RUN npm config set registry https://registry.npmmirror.com/ 

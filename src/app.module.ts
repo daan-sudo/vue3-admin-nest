@@ -22,7 +22,6 @@ import {
   WinstonModule,
 } from 'nest-winston';
 import winston from 'winston';
-import { CustomTypeOrmLogger } from './CustomTypeOrmLogger';
 
 @Module({
   imports: [
@@ -48,6 +47,7 @@ import { CustomTypeOrmLogger } from './CustomTypeOrmLogger';
     UserModule,
     TypeOrmModule.forRootAsync({
       useFactory(configService: ConfigService, logger: WinstonLogger) {
+        console.log(process.env.NODE_ENV, 'process.env.NODE_ENV');
         return {
           type: 'mysql',
           host: configService.get('mysql_server_host'),
