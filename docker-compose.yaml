@@ -53,6 +53,8 @@ services:
 
   mysql-container:
     image: mysql # 建议明确版本，防止镜像自动升级导致不兼容
+    ports:
+      - '3306:3306' # 必须添加这一行，左边是 NAS 端口，右边是容器端口
     container_name: mysql-container
     volumes:
       - /volume2/docker/mysql:/var/lib/mysql
